@@ -6,7 +6,7 @@
       <div class="container mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
           <div class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            DevPortfolio
+            Devoy Douglas
           </div>
           <div class="hidden md:flex items-center space-x-8">
             <a 
@@ -72,7 +72,7 @@
       
       <!-- Floating Elements -->
       <div class="absolute top-20 left-10 w-20 h-20 bg-blue-500/10 rounded-full animate-float"></div>
-      <div class="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/10 rounded-full animate-float-delayed"></div>
+      <div class="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/10 rounded-full animate-float-delayed" ><img class="rounded-full h-32 w-32 object-cover" :src="Img" alt="Me">  </div>
     </section>
 
     <!-- About Section -->
@@ -82,7 +82,7 @@
         <div class="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div class="w-80 h-80 mx-auto bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-              <UserIcon class="w-40 h-40 text-white" />
+              <img class="rounded-full  object-cover" :src="Img2" alt="Me">
             </div>
           </div>
           <div>
@@ -199,15 +199,15 @@
             <div class="space-y-4">
               <div class="flex items-center gap-4">
                 <MailIcon class="w-6 h-6 text-blue-400" />
-                <span>Devoy Douglas@developer.com</span>
+                <span>devoydouglas@gmail.com.com</span>
               </div>
               <div class="flex items-center gap-4">
                 <PhoneIcon class="w-6 h-6 text-blue-400" />
-                <span>+1 (555) 123-4567</span>
+                <span>+1 876 299 8960</span>
               </div>
               <div class="flex items-center gap-4">
                 <MapPinIcon class="w-6 h-6 text-blue-400" />
-                <span>San Francisco, CA</span>
+                <span>Mandeville, Manchester Jamaica </span>
               </div>
             </div>
 
@@ -268,7 +268,7 @@
     <footer class="bg-gray-800 py-8">
       <div class="container mx-auto px-6 text-center">
         <p class="text-gray-400">
-          © {{ currentYear }} Devoy Douglas Developer. Built with Vue.js and ❤️
+          © {{ currentYear }} Devoy Douglas Built with Vue.js and Tailwind CSS.
         </p>
       </div>
     </footer>
@@ -294,8 +294,9 @@ import {
   ShoppingCartIcon,
   BarChart3Icon
 } from 'lucide-vue-next'
-import "./style.css"; // Import your main CSS file
-
+import "./style.css"; 
+import Img from './assets/img/me.png' 
+import Img2 from './assets/img/me-side.png' 
 // Reactive data
 const activeSection = ref('home')
 const mobileMenuOpen = ref(false)
