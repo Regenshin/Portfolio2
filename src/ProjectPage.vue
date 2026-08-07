@@ -32,7 +32,7 @@
           <div>
             <p class="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-white/80">Live project workspace</p>
             <h1 class="text-3xl font-bold text-white sm:text-4xl">{{ project.title }}</h1>
-            <p class="mt-4 max-w-2xl text-base text-white/80 sm:text-lg">{{ project.overview }}</p>
+            <p class="mt-4 max-w-2xl text-base text-white/80 sm:text-lg">{{ project.description }}</p>
           </div>
           <div class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white/90">
             {{ project.liveLabel }}
