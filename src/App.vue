@@ -1,16 +1,19 @@
 
 <template>
- <div class="min-h-screen bg-gray-900 text-white">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 z-50">
-      <div class="container mx-auto px-6 py-4">
+  <div v-if="activeView === 'project' && currentProjectId !== null" class="min-h-screen bg-gray-900 text-white">
+    <ProjectPage :project-id="currentProjectId" :standalone="isStandaloneView" @back="closeProject" />
+  </div>
+
+  <div v-else class="min-h-screen bg-gray-900 text-white">
+    <nav class="fixed top-0 z-50 w-full border-b border-gray-800 bg-gray-900/95 backdrop-blur-sm">
+      <div class="container mx-auto px-4 py-4 sm:px-6">
         <div class="flex items-center justify-between">
-          <div class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          <div class="nav-name text-lg font-bold sm:text-2xl">
             Devoy Douglas
           </div>
-          <div class="hidden md:flex items-center space-x-8">
-            <a 
-              v-for="item in navItems" 
+          <div class="hidden items-center space-x-8 md:flex">
+            <a
+              v-for="item in navItems"
               :key="item.id"
               @click="scrollToSection(item.id)"
               :class="['cursor-pointer transition-colors hover:text-blue-400', activeSection === item.id ? 'text-blue-400' : 'text-gray-300']"
@@ -18,94 +21,87 @@
               {{ item.name }}
             </a>
           </div>
-          <button 
-            @click="toggleMobileMenu"
-            class="md:hidden text-gray-300 hover:text-white"
-          >
-            <MenuIcon class="w-6 h-6" />
+          <button @click="toggleMobileMenu" class="text-gray-300 hover:text-white md:hidden">
+            <MenuIcon class="h-6 w-6" />
           </button>
         </div>
-        
-        <!-- Mobile Menu -->
-        <div v-if="mobileMenuOpen" class="md:hidden mt-4 pb-4 border-t border-gray-800">
-          <div class="flex flex-col space-y-4 mt-4">
-            <a 
-              v-for="item in navItems" 
-              :key="item.id"
-              @click="scrollToSection(item.id); toggleMobileMenu()"
-              class="cursor-pointer text-gray-300 hover:text-blue-400 transition-colors"
-            >
-              {{ item.name }}
-            </a>
+
+        <transition name="slide-down">
+          <div v-if="mobileMenuOpen" class="mt-4 overflow-hidden border-t border-gray-800 pb-4 md:hidden">
+            <div class="mt-4 flex flex-col space-y-4">
+              <a
+                v-for="item in navItems"
+                :key="item.id"
+                @click="scrollToSection(item.id); toggleMobileMenu()"
+                class="cursor-pointer text-gray-300 transition-colors hover:text-blue-400"
+              >
+                {{ item.name }}
+              </a>
+            </div>
           </div>
-        </div>
+        </transition>
       </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden">
+    <section id="home" class="relative flex min-h-screen items-center justify-center overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20"></div>
-      <div class="container mx-auto px-6 text-center relative z-10">
-        <div class="animate-fade-in-up">
-          <h1 class="text-5xl md:text-7xl font-bold mb-6">
+      <div class="container relative z-10 px-4 text-center sm:px-6">
+        <div class="animate-fade-in-up reveal-on-scroll">
+          <h1 class="mb-4 text-[clamp(2rem,5vw,3.5rem)] font-bold sm:text-5xl md:text-7xl">
             Hi, I'm <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Devoy Douglas</span>
           </h1>
-          <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Full-Stack Web Developer crafting beautiful, functional, and user-centered digital experiences
+          <p class="mx-auto mb-8 max-w-3xl text-base text-gray-300 sm:text-lg md:text-2xl">
+            Full-stack developer building high-impact digital products with elegant UX, thoughtful motion, and reliable performance.
           </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
+          <div class="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
+            <button
               @click="scrollToSection('projects')"
-              class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-3 rounded-full font-semibold transition-all transform hover:scale-105"
+              class="w-full rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:from-blue-600 hover:to-purple-700 sm:w-auto sm:text-base"
             >
               View My Work
             </button>
-            <button 
+            <button
               @click="scrollToSection('contact')"
-              class="border-2 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3 rounded-full font-semibold transition-all"
+              class="w-full rounded-full border-2 border-blue-400 px-5 py-3 text-sm font-semibold text-blue-400 transition-all duration-300 hover:bg-blue-400 hover:text-white sm:w-auto sm:text-base"
             >
               Get In Touch
             </button>
           </div>
         </div>
       </div>
-      
-      <!-- Floating Elements -->
-      <div class="absolute top-20 left-10 w-20 h-20 bg-blue-500/10 rounded-full animate-float"></div>
-      <div class="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/10 rounded-full animate-float-delayed" ><img class="rounded-full h-32 w-32 object-cover" :src="Img" alt="Me">  </div>
+
+      <div class="animate-float absolute left-4 top-20 h-16 w-16 rounded-full bg-blue-500/10 sm:left-10 sm:h-20 sm:w-20"></div>
+      <div class="animate-float-delayed absolute bottom-16 right-4 h-24 w-24 rounded-full bg-purple-500/10 sm:bottom-20 sm:right-10 sm:h-32 sm:w-32">
+        <img class="h-24 w-24 rounded-full object-cover sm:h-32 sm:w-32" :src="Img" alt="Me" />
+      </div>
     </section>
 
-    <!-- About Section -->
-    <section id="about" class="py-20 bg-gray-800/50">
-      <div class="container mx-auto px-6">
-        <h2 class="text-4xl font-bold text-center mb-16">About Me</h2>
-        <div class="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <div class="w-80 h-80 mx-auto bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-              <img class="rounded-full  object-cover" :src="Img2" alt="Me">
+    <section id="about" class="bg-gray-800/50 py-20">
+      <div class="container mx-auto px-4 sm:px-6">
+        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">About Me</h2>
+        <div class="grid items-center gap-8 md:grid-cols-2 md:gap-12">
+          <div class="reveal-on-scroll">
+            <div class="about-photo-shell mx-auto flex h-64 w-64 items-center justify-center rounded-full p-2 shadow-2xl shadow-purple-500/20 sm:h-80 sm:w-80">
+              <img class="h-full w-full rounded-full object-cover" :src="Img2" alt="Me" />
             </div>
           </div>
-          <div>
-            <p class="text-lg text-gray-300 mb-6 leading-relaxed">
-              I'm a passionate web developer with {{ yearsOfExperience }}+ years of experience creating digital solutions 
-              that make a difference. I specialize in modern web technologies and love turning complex problems 
-              into simple, beautiful designs.
+          <div class="reveal-on-scroll">
+            <p class="mb-6 text-base leading-relaxed text-gray-300 sm:text-lg">
+              I'm a passionate web developer with {{ yearsOfExperience }}+ years of experience creating digital solutions that move businesses forward. I combine product thinking with modern engineering to ship experiences that feel effortless and impactful.
             </p>
-            <p class="text-lg text-gray-300 mb-8 leading-relaxed">
-              When I'm not coding, you can find me exploring new technologies, contributing to open source projects, 
-              or sharing knowledge with the developer community.
+            <p class="mb-8 text-base leading-relaxed text-gray-300 sm:text-lg">
+              From responsive interfaces to backend systems and data-rich dashboards, I enjoy turning complex problems into clear, intuitive products.
             </p>
-            
-            <!-- Skills -->
-            <div class="grid grid-cols-2 gap-4">
-              <div v-for="skill in skills" :key="skill.name" class="bg-gray-700/50 p-4 rounded-lg">
-                <div class="flex items-center justify-between mb-2">
+
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div v-for="skill in skills" :key="skill.name" class="rounded-lg border border-gray-700 bg-gray-700/50 p-4">
+                <div class="mb-2 flex items-center justify-between">
                   <span class="font-semibold">{{ skill.name }}</span>
                   <span class="text-sm text-gray-400">{{ skill.level }}%</span>
                 </div>
-                <div class="w-full bg-gray-600 rounded-full h-2">
-                  <div 
-                    class="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-1000"
+                <div class="h-2 w-full rounded-full bg-gray-600">
+                  <div
+                    class="h-2 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-1000"
                     :style="{ width: `${skill.level}%` }"
                   ></div>
                 </div>
@@ -116,38 +112,44 @@
       </div>
     </section>
 
-    <!-- Projects Section -->
     <section id="projects" class="py-20">
-      <div class="container mx-auto px-6">
-        <h2 class="text-4xl font-bold text-center mb-16">Featured Projects</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div 
-            v-for="project in projects" 
+      <div class="container mx-auto px-4 sm:px-6">
+        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">Featured Projects</h2>
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div
+            v-for="project in projects"
             :key="project.id"
-            class="bg-gray-800 rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300 group"
+            class="group reveal-on-scroll overflow-hidden rounded-2xl border border-gray-800 bg-gray-800/80 shadow-2xl shadow-black/20 transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10"
           >
-            <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <component :is="project.icon" class="w-16 h-16 text-white" />
+            <div :class="['flex h-48 items-center justify-between bg-gradient-to-br', project.gradient, 'p-6']">
+              <component :is="project.icon" class="h-16 w-16 text-white" />
+              <div class="rounded-full bg-white/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-white">
+                Live demo
+              </div>
             </div>
-            <div class="p-6">
-              <h3 class="text-xl font-bold mb-2">{{ project.title }}</h3>
-              <p class="text-gray-400 mb-4">{{ project.description }}</p>
-              <div class="flex flex-wrap gap-2 mb-4">
-                <span 
-                  v-for="tech in project.technologies" 
+            <div class="p-5 sm:p-6">
+              <h3 class="mb-2 text-lg font-bold sm:text-xl">{{ project.title }}</h3>
+              <p class="mb-4 text-sm leading-relaxed text-gray-400">{{ project.description }}</p>
+              <div class="mb-4 flex flex-wrap gap-2">
+                <span
+                  v-for="tech in project.technologies"
                   :key="tech"
-                  class="bg-gray-700 text-xs px-2 py-1 rounded-full"
+                  class="rounded-full bg-gray-700 px-2 py-1 text-xs text-gray-200"
                 >
                   {{ tech }}
                 </span>
               </div>
-              <div class="flex gap-4">
-                <button class="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors">
-                  <ExternalLinkIcon class="w-4 h-4" />
+              <div class="flex flex-wrap gap-4">
+                <button @click="openProject(project)" class="flex items-center gap-2 text-blue-400 transition-colors hover:text-blue-300">
+                  <ExternalLinkIcon class="h-4 w-4" />
                   Live Demo
                 </button>
-                <button class="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors">
-                  <GithubIcon class="w-4 h-4" />
+                <button @click="openStandaloneProject(project)" class="flex items-center gap-2 text-emerald-400 transition-colors hover:text-emerald-300">
+                  <GlobeIcon class="h-4 w-4" />
+                  Open website
+                </button>
+                <button class="flex items-center gap-2 text-gray-400 transition-colors hover:text-gray-300">
+                  <GithubIcon class="h-4 w-4" />
                   Code
                 </button>
               </div>
@@ -157,26 +159,23 @@
       </div>
     </section>
 
-    <!-- Experience Section -->
-    <section id="experience" class="py-20 bg-gray-800/50">
-      <div class="container mx-auto px-6">
-        <h2 class="text-4xl font-bold text-center mb-16">Experience</h2>
-        <div class="max-w-4xl mx-auto">
+    <section id="experience" class="bg-gray-800/50 py-20">
+      <div class="container mx-auto px-4 sm:px-6">
+        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">Experience</h2>
+        <div class="mx-auto max-w-4xl">
           <div class="relative">
-            <!-- Timeline line -->
-            <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-400 to-purple-500"></div>
-            
-            <div v-for="(exp, index) in experience" :key="index" class="relative flex items-start mb-12">
-              <!-- Timeline dot -->
-              <div class="absolute left-6 w-4 h-4 bg-blue-500 rounded-full border-4 border-gray-900"></div>
-              
-              <div class="ml-16 bg-gray-800 p-6 rounded-lg flex-1">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                  <h3 class="text-xl font-bold">{{ exp.position }}</h3>
-                  <span class="text-blue-400 font-semibold">{{ exp.period }}</span>
+            <div class="absolute bottom-0 left-4 top-0 w-0.5 bg-gradient-to-b from-blue-400 to-purple-500 sm:left-8"></div>
+
+            <div v-for="(exp, index) in experience" :key="index" class="relative mb-8 flex items-start sm:mb-12">
+              <div class="absolute left-2 h-4 w-4 rounded-full border-4 border-gray-900 bg-blue-500 sm:left-6"></div>
+
+              <div class="ml-8 flex-1 rounded-lg bg-gray-800 p-4 sm:ml-16 sm:p-6">
+                <div class="mb-2 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                  <h3 class="text-lg font-bold sm:text-xl">{{ exp.position }}</h3>
+                  <span class="font-semibold text-blue-400">{{ exp.period }}</span>
                 </div>
-                <h4 class="text-lg text-gray-300 mb-3">{{ exp.company }}</h4>
-                <p class="text-gray-400 leading-relaxed">{{ exp.description }}</p>
+                <h4 class="mb-3 text-base text-gray-300 sm:text-lg">{{ exp.company }}</h4>
+                <p class="leading-relaxed text-sm text-gray-400 sm:text-base">{{ exp.description }}</p>
               </div>
             </div>
           </div>
@@ -184,78 +183,76 @@
       </div>
     </section>
 
-    <!-- Contact Section -->
     <section id="contact" class="py-20">
-      <div class="container mx-auto px-6">
-        <h2 class="text-4xl font-bold text-center mb-16">Get In Touch</h2>
-        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
-          <div>
-            <h3 class="text-2xl font-bold mb-6">Let's work together</h3>
-            <p class="text-gray-300 mb-8 leading-relaxed">
-              I'm always interested in new opportunities and exciting projects. 
-              Whether you have a question or just want to say hi, feel free to reach out!
+      <div class="container mx-auto px-4 sm:px-6">
+        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">Get In Touch</h2>
+        <div class="mx-auto grid max-w-4xl gap-8 md:grid-cols-2 md:gap-12">
+          <div class="reveal-on-scroll">
+            <h3 class="mb-6 text-xl font-bold sm:text-2xl">Let's work together</h3>
+            <p class="mb-8 leading-relaxed text-gray-300">
+              I'm always excited to collaborate on ambitious ideas, product launches, or polished user experiences. Reach out and we'll shape something meaningful.
             </p>
-            
+
             <div class="space-y-4">
-              <div class="flex items-center gap-4">
-                <MailIcon class="w-6 h-6 text-blue-400" />
-                <span>devoydouglas@gmail.com.com</span>
+              <div class="flex items-start gap-4">
+                <MailIcon class="mt-1 h-5 w-5 text-blue-400 sm:h-6 sm:w-6" />
+                <span class="break-all text-sm sm:text-base">devoydouglas@gmail.com</span>
               </div>
-              <div class="flex items-center gap-4">
-                <PhoneIcon class="w-6 h-6 text-blue-400" />
-                <span>+1 876 299 8960</span>
+              <div class="flex items-start gap-4">
+                <PhoneIcon class="mt-1 h-5 w-5 text-blue-400 sm:h-6 sm:w-6" />
+                <span class="text-sm sm:text-base">+1 876 299 8960</span>
               </div>
-              <div class="flex items-center gap-4">
-                <MapPinIcon class="w-6 h-6 text-blue-400" />
-                <span>Mandeville, Manchester Jamaica </span>
+              <div class="flex items-start gap-4">
+                <MapPinIcon class="mt-1 h-5 w-5 text-blue-400 sm:h-6 sm:w-6" />
+                <span class="text-sm sm:text-base">Mandeville, Manchester, Jamaica</span>
               </div>
             </div>
 
-            <div class="flex gap-4 mt-8">
-              <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
-                <GithubIcon class="w-6 h-6" />
+            <div class="mt-8 flex flex-wrap gap-3 sm:gap-4">
+              <a href="#" class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-blue-500">
+                <GithubIcon class="h-6 w-6" />
               </a>
-              <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
-                <LinkedinIcon class="w-6 h-6" />
+              <a href="#" class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-blue-500">
+                <LinkedinIcon class="h-6 w-6" />
               </a>
-              <a href="#" class="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors">
-                <TwitterIcon class="w-6 h-6" />
+              <a href="#" class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 transition-colors hover:bg-blue-500">
+                <TwitterIcon class="h-6 w-6" />
               </a>
             </div>
           </div>
 
-          <form @submit.prevent="submitForm" class="space-y-6">
+          <form @submit.prevent="submitForm" class="space-y-6 reveal-on-scroll">
             <div>
-              <label class="block text-sm font-semibold mb-2">Name</label>
-              <input 
+              <label class="mb-2 block text-sm font-semibold">Name</label>
+              <input
                 v-model="form.name"
-                type="text" 
-                class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-400 transition-colors"
+                type="text"
+                class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 transition-colors focus:border-blue-400 focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label class="block text-sm font-semibold mb-2">Email</label>
-              <input 
+              <label class="mb-2 block text-sm font-semibold">Email</label>
+              <input
                 v-model="form.email"
-                type="email" 
-                class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-400 transition-colors"
+                type="email"
+                class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 transition-colors focus:border-blue-400 focus:outline-none"
                 required
               />
             </div>
             <div>
-              <label class="block text-sm font-semibold mb-2">Message</label>
-              <textarea 
+              <label class="mb-2 block text-sm font-semibold">Message</label>
+              <textarea
                 v-model="form.message"
-                rows="5" 
-                class="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:outline-none focus:border-blue-400 transition-colors resize-none"
+                rows="5"
+                class="w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 transition-colors focus:border-blue-400 focus:outline-none"
                 required
               ></textarea>
             </div>
-            <button 
+            <button
               type="submit"
               :disabled="isSubmitting"
-              class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 font-semibold transition-all duration-300 hover:scale-105 hover:from-blue-600 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {{ isSubmitting ? 'Sending...' : 'Send Message' }}
             </button>
@@ -264,25 +261,25 @@
       </div>
     </section>
 
-    <!-- Footer -->
     <footer class="bg-gray-800 py-8">
-      <div class="container mx-auto px-6 text-center">
+      <div class="container mx-auto px-4 text-center sm:px-6">
         <p class="text-gray-400">
-          © {{ currentYear }} Devoy Douglas Built with Vue.js and Tailwind CSS.
+          © {{ currentYear }} Devoy Douglas. Built with Vue.js and Tailwind CSS.
         </p>
       </div>
     </footer>
+
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { 
-  MenuIcon, 
-  UserIcon, 
-  ExternalLinkIcon, 
-  GithubIcon, 
-  LinkedinIcon, 
+import ProjectPage from './ProjectPage.vue'
+import {
+  MenuIcon,
+  ExternalLinkIcon,
+  GithubIcon,
+  LinkedinIcon,
   TwitterIcon,
   MailIcon,
   PhoneIcon,
@@ -294,13 +291,17 @@ import {
   ShoppingCartIcon,
   BarChart3Icon
 } from 'lucide-vue-next'
-import "./style.css"; 
-import Img from './assets/img/me.png' 
-import Img2 from './assets/img/me-side.png' 
-// Reactive data
+import './style.css'
+import Img from './assets/img/me.png'
+import Img2 from './assets/img/me-side.png'
+
 const activeSection = ref('home')
 const mobileMenuOpen = ref(false)
 const isSubmitting = ref(false)
+const revealObserver = ref(null)
+const activeView = ref('home')
+const currentProjectId = ref(null)
+const isStandaloneView = ref(false)
 
 const form = ref({
   name: '',
@@ -308,11 +309,9 @@ const form = ref({
   message: ''
 })
 
-// Computed properties
 const currentYear = computed(() => new Date().getFullYear())
 const yearsOfExperience = computed(() => new Date().getFullYear() - 2019)
 
-// Navigation items
 const navItems = [
   { id: 'home', name: 'Home' },
   { id: 'about', name: 'About' },
@@ -321,7 +320,6 @@ const navItems = [
   { id: 'contact', name: 'Contact' }
 ]
 
-// Skills data
 const skills = [
   { name: 'JavaScript', level: 95 },
   { name: 'Vue.js', level: 90 },
@@ -331,103 +329,258 @@ const skills = [
   { name: 'CSS/SCSS', level: 92 }
 ]
 
-// Projects data
 const projects = [
   {
     id: 1,
     title: 'E-Commerce Platform',
-    description: 'Full-stack e-commerce solution with payment integration and admin dashboard.',
+    siteName: 'Aurora Shop',
+    logo: '🛒',
+    primaryColor: '#0ea5a4',
+    light: false,
+    description: 'A polished storefront with merchandising, cart recovery, and a powerful admin dashboard.',
     technologies: ['Vue.js', 'Node.js', 'MongoDB', 'Stripe'],
-    icon: ShoppingCartIcon
+    icon: ShoppingCartIcon,
+    gradient: 'from-blue-500 via-cyan-500 to-teal-400',
+    demoSummary: 'A multi-step storefront experience designed to keep shoppers engaged from discovery to checkout.',
+    liveLabel: 'Live demo • customer journey + operations hub',
+    features: [
+      { title: 'Responsive merchandising', description: 'Flexible category pages, promotional banners, and tailored product discovery.' },
+      { title: 'Smart checkout', description: 'One-click payment flow, saved addresses, and resilient cart recovery.' },
+      { title: 'Admin insights', description: 'Inventory controls, sales reporting, and shipping automation in one console.' }
+    ],
+    metrics: [
+      { label: 'Conversion uplift', value: '+32%' },
+      { label: 'Average order value', value: '+18%' },
+      { label: 'Support tickets', value: '-41%' }
+    ],
+    process: [
+      'Mapped user journeys for shoppers, admins, and support teams.',
+      'Built modular UI components with reusable state and animations.',
+      'Connected secure payments, inventory sync, and reporting dashboards.'
+    ],
+    impact: 'The experience balances conversion-focused design with operational clarity, giving the business a storefront that feels premium while remaining easy to manage.'
   },
   {
     id: 2,
     title: 'Task Management App',
-    description: 'Collaborative project management tool with real-time updates and team features.',
+    siteName: 'Momentum Boards',
+    logo: '📋',
+    primaryColor: '#7c3aed',
+    light: true,
+    description: 'A collaborative planning tool for teams that need visibility, focus, and momentum.',
     technologies: ['React', 'Express', 'Socket.io', 'PostgreSQL'],
-    icon: BarChart3Icon
+    icon: BarChart3Icon,
+    gradient: 'from-violet-500 via-purple-500 to-fuchsia-500',
+    demoSummary: 'A real-time workspace for project tracking, deadline planning, and seamless team coordination.',
+    liveLabel: 'Live demo • shared boards + instant collaboration',
+    features: [
+      { title: 'Live collaboration', description: 'Board updates and comments appear instantly across team members.' },
+      { title: 'Smart planning', description: 'Recurring tasks, dependencies, and timeline views help teams stay aligned.' },
+      { title: 'Team clarity', description: 'Custom workspaces and role-based permissions keep complexity organized.' }
+    ],
+    metrics: [
+      { label: 'Weekly active users', value: '12k+' },
+      { label: 'Task completion', value: '+27%' },
+      { label: 'Release velocity', value: '+2x' }
+    ],
+    process: [
+      'Designed a board-first experience for fast task capture and prioritization.',
+      'Implemented live sync and optimistic updates for collaborative editing.',
+      'Optimized workflows for planning, reporting, and stakeholder transparency.'
+    ],
+    impact: 'The platform turns scattered work into a calm, visible operating system that makes progress easy to follow and action easy to take.'
   },
   {
     id: 3,
     title: 'Weather Dashboard',
-    description: 'Beautiful weather application with location-based forecasts and interactive maps.',
+    siteName: 'Island Weather',
+    logo: '🌤️',
+    primaryColor: '#0284c7',
+    light: false,
+    description: 'An immersive forecasting experience with personalized weather insights and rich visuals.',
     technologies: ['JavaScript', 'API Integration', 'Chart.js'],
-    icon: GlobeIcon
+    icon: GlobeIcon,
+    gradient: 'from-sky-500 via-blue-500 to-indigo-500',
+    demoSummary: 'A vivid weather experience that turns raw data into concise, useful decision support.',
+    liveLabel: 'Live demo • insights + local forecasts',
+    features: [
+      { title: 'Context-aware forecasts', description: 'Hourly and daily predictions shift beautifully based on location and time.' },
+      { title: 'Visual trend analysis', description: 'Temperature, rain, and wind charts make changing conditions easy to read.' },
+      { title: 'Personalized alerts', description: 'Users receive intelligent summaries for travel, commuting, and daily planning.' }
+    ],
+    metrics: [
+      { label: 'Forecast accuracy', value: '94%' },
+      { label: 'Session time', value: '+38%' },
+      { label: 'Daily users', value: '8.4k' }
+    ],
+    process: [
+      'Combined weather APIs with rich UI states for fast and resilient loading.',
+      'Designed motion and color systems that support reading at a glance.',
+      'Added filtered views for travel, commute, and weekend planning.'
+    ],
+    impact: 'The result is a data-rich but approachable experience that helps people make decisions faster without feeling overwhelmed.'
   },
   {
     id: 4,
     title: 'Mobile Banking App',
-    description: 'Secure mobile banking interface with biometric authentication and transaction history.',
+    siteName: 'Verdant Bank',
+    logo: '🏦',
+    primaryColor: '#10b981',
+    light: true,
+    description: 'A secure, reassuring finance interface focused on confidence and clarity.',
     technologies: ['React Native', 'Firebase', 'Redux'],
-    icon: SmartphoneIcon
+    icon: SmartphoneIcon,
+    gradient: 'from-emerald-500 via-green-500 to-lime-500',
+    demoSummary: 'A premium mobile finance experience that balances security, usability, and trust.',
+    liveLabel: 'Live demo • secure flows + instant visibility',
+    features: [
+      { title: 'Secure onboarding', description: 'Biometric sign-in and guided verification keep access safe and simple.' },
+      { title: 'Transaction clarity', description: 'Users can review statements, recurring payments, and cards in one place.' },
+      { title: 'Helpful nudges', description: 'The experience surfaces smart alerts for spending, savings, and account security.' }
+    ],
+    metrics: [
+      { label: 'Fraud protection', value: '99.98%' },
+      { label: 'User trust score', value: '4.9/5' },
+      { label: 'App retention', value: '+24%' }
+    ],
+    process: [
+      'Structured the flow around confidence, reducing friction at critical moments.',
+      'Drafted interaction states for verification, transfers, and account insights.',
+      'Built a consistent visual language that feels secure and approachable.'
+    ],
+    impact: 'The experience brings calm to everyday money management and turns sensitive flows into something users feel good about using.'
   },
   {
     id: 5,
     title: 'CMS Platform',
-    description: 'Content management system with drag-and-drop editor and multi-user support.',
+    siteName: 'Publishly',
+    logo: '✍️',
+    primaryColor: '#f59e0b',
+    light: false,
+    description: 'A flexible publishing platform for content teams and fast-moving product launches.',
     technologies: ['Vue.js', 'Laravel', 'MySQL'],
-    icon: CodeIcon
+    icon: CodeIcon,
+    gradient: 'from-amber-500 via-orange-500 to-rose-500',
+    demoSummary: 'A content workspace where editors can publish, collaborate, and review with less friction.',
+    liveLabel: 'Live demo • editorial workflow + publishing',
+    features: [
+      { title: 'Drag-and-drop editing', description: 'A visual editor keeps page building fast and intuitive for non-technical teams.' },
+      { title: 'Approval flow', description: 'Collaborators can review drafts and publish with clear sign-off controls.' },
+      { title: 'Scalable structure', description: 'Reusable templates and content blocks support rapid growth and consistent design.' }
+    ],
+    metrics: [
+      { label: 'Publishing speed', value: '3x faster' },
+      { label: 'Editor adoption', value: '96%' },
+      { label: 'Content errors', value: '-58%' }
+    ],
+    process: [
+      'Mapped the editorial workflow from draft to publish and roll out.',
+      'Introduced reusable layouts and content modules to reduce effort.',
+      'Connected the app with permission controls and review states for teams.'
+    ],
+    impact: 'The platform helps content teams publish with confidence while creating a more consistent experience for every audience.'
   },
   {
     id: 6,
     title: 'Analytics Dashboard',
-    description: 'Real-time analytics platform with customizable widgets and data visualization.',
+    siteName: 'Signal Lens',
+    logo: '📊',
+    primaryColor: '#8b5cf6',
+    light: true,
+    description: 'A high-signal business analytics experience for fast-moving teams.',
     technologies: ['React', 'D3.js', 'Node.js', 'Redis'],
-    icon: DatabaseIcon
+    icon: DatabaseIcon,
+    gradient: 'from-fuchsia-500 via-purple-500 to-indigo-500',
+    demoSummary: 'A live data workspace that surfaces clear performance direction without sacrificing depth.',
+    liveLabel: 'Live demo • insight panels + real-time metrics',
+    features: [
+      { title: 'Real-time monitoring', description: 'Operators can watch key metrics move instantly as conditions shift.' },
+      { title: 'Flexible widgets', description: 'Dashboards can be tailored to team goals, roles, and priorities.' },
+      { title: 'Decision-ready views', description: 'Charts and summaries highlight what matters most without overwhelming users.' }
+    ],
+    metrics: [
+      { label: 'Query speed', value: '< 1.2s' },
+      { label: 'Focus time', value: '+31%' },
+      { label: 'Reporting time', value: '-45%' }
+    ],
+    process: [
+      'Prioritized clarity and quick interpretation over dense data dumps.',
+      'Built interactive cards and filters for sectional analysis.',
+      'Connected streaming data and dashboard state without sacrificing performance.'
+    ],
+    impact: 'The experience turns complex metrics into a calm operational dashboard that helps teams act decisively and quickly.'
   }
 ]
 
-// Experience data
 const experience = [
   {
-    position: 'Senior Full-Stack Developer',
-    company: 'Tech Innovations Inc.',
-    period: '2022 - Present',
-    description: 'Lead development of scalable web applications using modern JavaScript frameworks. Mentor junior developers and architect solutions for complex business requirements.'
-  },
-  {
-    position: 'Frontend Developer',
-    company: 'Digital Solutions Co.',
-    period: '2020 - 2022',
-    description: 'Developed responsive web applications using React and Vue.js. Collaborated with UX/UI designers to implement pixel-perfect designs and improve user experience.'
-  },
-  {
-    position: 'Junior Web Developer',
+    position: 'Junior Developer',
     company: 'StartUp Studio',
-    period: '2019 - 2020',
-    description: 'Built and maintained websites using HTML, CSS, and JavaScript. Gained experience in version control, testing, and agile development methodologies.'
+    period: '2019 - Present',
+    description: 'Built and maintained websites using HTML, CSS, and JavaScript. Gained strong fundamentals in version control, testing, and agile delivery while growing into more advanced front-end and full-stack work.'
   }
 ]
 
-// Methods
-const toggleMobileMenu = () => {
+function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value
 }
 
-const scrollToSection = (sectionId) => {
-  const element = document.getElementById(sectionId)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+function scrollToSection(id) {
+  const section = document.getElementById(id)
+  if (section) {
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    activeSection.value = id
+    mobileMenuOpen.value = false
   }
-  mobileMenuOpen.value = false
 }
 
-const submitForm = async () => {
-  isSubmitting.value = true
-  
-  // Simulate form submission
-  await new Promise(resolve => setTimeout(resolve, 2000))
-  
-  // Reset form
-  form.value = { name: '', email: '', message: '' }
-  isSubmitting.value = false
-  
-  alert('Message sent successfully!')
+function openProject(project) {
+  currentProjectId.value = project.id
+  activeView.value = 'project'
+  updateLocationHash(project.id)
 }
 
-const handleScroll = () => {
-  const sections = navItems.map(item => item.id)
-  const scrollPosition = window.scrollY + 100
+function openStandaloneProject(project) {
+  if (typeof window === 'undefined') return
+
+  const url = `${window.location.origin}${window.location.pathname}#project-${project.id}/full`
+  window.open(url, '_blank')
+}
+
+function closeProject() {
+  currentProjectId.value = null
+  activeView.value = 'home'
+  isStandaloneView.value = false
+  updateLocationHash()
+}
+
+function updateLocationHash(projectId = null, standalone = false) {
+  if (typeof window === 'undefined') return
+
+  const hash = projectId ? `#project-${projectId}${standalone ? '/full' : ''}` : ''
+  window.history.replaceState(null, '', `${window.location.pathname}${hash}`)
+  isStandaloneView.value = standalone
+}
+
+function syncViewFromHash() {
+  if (typeof window === 'undefined') return
+
+  const match = window.location.hash.match(/^#project-(\d+)(?:\/(full|standalone))?$/)
+  if (match) {
+    currentProjectId.value = Number(match[1])
+    activeView.value = 'project'
+    isStandaloneView.value = Boolean(match[2])
+    return
+  }
+
+  currentProjectId.value = null
+  activeView.value = 'home'
+  isStandaloneView.value = false
+}
+
+function handleScroll() {
+  const sections = navItems.map((item) => item.id)
+  const scrollPosition = window.scrollY + 120
 
   for (const sectionId of sections) {
     const element = document.getElementById(sectionId)
@@ -441,78 +594,35 @@ const handleScroll = () => {
   }
 }
 
-// Lifecycle hooks
+async function submitForm() {
+  isSubmitting.value = true
+  await new Promise((resolve) => setTimeout(resolve, 900))
+  form.value = { name: '', email: '', message: '' }
+  isSubmitting.value = false
+}
+
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  syncViewFromHash()
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+        }
+      })
+    },
+    { threshold: 0.16 }
+  )
+
+  document.querySelectorAll('.reveal-on-scroll').forEach((element) => observer.observe(element))
+  revealObserver.value = observer
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  handleScroll()
 })
 
 onUnmounted(() => {
+  revealObserver.value?.disconnect()
   window.removeEventListener('scroll', handleScroll)
 })
 </script>
-
-<style scoped>
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes float-delayed {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 1s ease-out;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: float-delayed 8s ease-in-out infinite;
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #1f2937;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #2563eb, #7c3aed);
-}
-</style>
