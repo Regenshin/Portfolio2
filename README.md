@@ -8,7 +8,7 @@ Welcome to my corner of the internet: a portfolio that shows the work, tells the
 - Click anywhere on a project card to open its interactive demo workspace. The title link also works with the keyboard; the card's standalone action stays separate.
 - Try the demo controls. Their sample data is saved in this browser, so a refresh does not wipe the little experiments.
 
-The contact form is a front-end prototype. It shows a short sending state and clears the fields, but it does not send a message to a server yet.
+The contact form opens a prefilled email draft addressed to Devoy. Your email app sends it when you press Send; the portfolio itself does not have a mail server.
 
 ## Run it locally
 

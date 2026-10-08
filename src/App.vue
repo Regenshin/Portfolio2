@@ -239,8 +239,9 @@
 
           <form @submit.prevent="submitForm" class="space-y-6 reveal-on-scroll">
             <div>
-              <label class="mb-2 block text-sm font-semibold">Name</label>
+              <label for="contact-name" class="mb-2 block text-sm font-semibold">Name</label>
               <input
+                id="contact-name"
                 v-model="form.name"
                 type="text"
                 class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 transition-colors focus:border-blue-400 focus:outline-none"
@@ -248,8 +249,9 @@
               />
             </div>
             <div>
-              <label class="mb-2 block text-sm font-semibold">Email</label>
+              <label for="contact-email" class="mb-2 block text-sm font-semibold">Email</label>
               <input
+                id="contact-email"
                 v-model="form.email"
                 type="email"
                 class="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 transition-colors focus:border-blue-400 focus:outline-none"
@@ -257,8 +259,9 @@
               />
             </div>
             <div>
-              <label class="mb-2 block text-sm font-semibold">Message</label>
+              <label for="contact-message" class="mb-2 block text-sm font-semibold">Message</label>
               <textarea
+                id="contact-message"
                 v-model="form.message"
                 rows="5"
                 class="w-full resize-none rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 transition-colors focus:border-blue-400 focus:outline-none"
@@ -267,11 +270,14 @@
             </div>
             <button
               type="submit"
-              :disabled="isSubmitting"
               class="w-full rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 font-semibold transition-all duration-300 hover:scale-105 hover:from-blue-600 hover:to-purple-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {{ isSubmitting ? 'Sending...' : 'Send Message' }}
+              Send Message
             </button>
+            <p v-if="formStatus" class="message-status" role="status">
+              {{ formStatus }}
+              <a :href="mailtoHref">Open your email draft</a>
+            </p>
           </form>
         </div>
       </div>
@@ -312,7 +318,6 @@ import Img2 from './assets/img/me-side.png'
 
 const activeSection = ref('home')
 const mobileMenuOpen = ref(false)
-const isSubmitting = ref(false)
 const revealObserver = ref(null)
 const activeView = ref('home')
 const currentProjectId = ref(null)
@@ -322,6 +327,18 @@ const form = ref({
   name: '',
   email: '',
   message: ''
+})
+const formStatus = ref('')
+const mailtoHref = computed(() => {
+  const subject = `Portfolio message from ${form.value.name.trim() || 'a visitor'}`
+  const body = [
+    `Name: ${form.value.name.trim()}`,
+    `Email: ${form.value.email.trim()}`,
+    '',
+    form.value.message.trim()
+  ].join('\n')
+
+  return `mailto:devoydouglas@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
 })
 
 const currentYear = computed(() => new Date().getFullYear())
@@ -627,11 +644,9 @@ function observeRevealElements() {
   revealObserver.value = observer
 }
 
-async function submitForm() {
-  isSubmitting.value = true
-  await new Promise((resolve) => setTimeout(resolve, 900))
-  form.value = { name: '', email: '', message: '' }
-  isSubmitting.value = false
+function submitForm() {
+  formStatus.value = 'Your email app should open with the message ready to send.'
+  window.location.href = mailtoHref.value
 }
 
 onMounted(() => {

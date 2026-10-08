@@ -61,7 +61,7 @@ To reset the sample state, clear that key in the browser's developer tools under
 
 ### Contact form
 
-The contact form currently simulates a short send delay, then resets its fields. It has no email service or API behind it. Before using it to receive real messages, connect a form provider or add a backend endpoint and update `submitForm()` in `App.vue`.
+The contact form builds a `mailto:` URL with the visitor's name, email address, and message, then opens that draft in their configured email app. The form keeps its contents, and a visible fallback link lets the visitor open the draft again if needed. The visitor still presses Send in their email app; this static site does not send mail itself or receive a delivery confirmation. For direct in-page delivery, configure a form provider or backend endpoint and replace the `submitForm()` mailto behavior in `App.vue`.
 
 ## Common edits
 
