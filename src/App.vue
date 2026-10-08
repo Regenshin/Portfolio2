@@ -4,36 +4,36 @@
     <ProjectPage :project-id="currentProjectId" :standalone="isStandaloneView" @back="closeProject" />
   </div>
 
-  <div v-else class="min-h-screen bg-gray-900 text-white">
-    <nav class="fixed top-0 z-50 w-full border-b border-gray-800 bg-gray-900/95 backdrop-blur-sm">
+  <div v-else class="portfolio-shell min-h-screen">
+    <nav class="site-nav fixed top-0 z-50 w-full border-b backdrop-blur-sm">
       <div class="container mx-auto px-4 py-4 sm:px-6">
         <div class="flex items-center justify-between">
           <div class="nav-name text-lg font-bold sm:text-2xl">
-            Devoy Douglas
+            DD<span class="nav-mark">.</span>
           </div>
           <div class="hidden items-center space-x-8 md:flex">
             <a
               v-for="item in navItems"
               :key="item.id"
               @click="scrollToSection(item.id)"
-              :class="['cursor-pointer transition-colors hover:text-blue-400', activeSection === item.id ? 'text-blue-400' : 'text-gray-300']"
+              :class="['cursor-pointer transition-colors', activeSection === item.id ? 'is-active' : '']"
             >
               {{ item.name }}
             </a>
           </div>
-          <button @click="toggleMobileMenu" class="text-gray-300 hover:text-white md:hidden">
+          <button @click="toggleMobileMenu" class="menu-toggle md:hidden" aria-label="Toggle navigation">
             <MenuIcon class="h-6 w-6" />
           </button>
         </div>
 
         <transition name="slide-down">
-          <div v-if="mobileMenuOpen" class="mt-4 overflow-hidden border-t border-gray-800 pb-4 md:hidden">
+          <div v-if="mobileMenuOpen" class="mobile-nav mt-4 overflow-hidden border-t pb-4 md:hidden">
             <div class="mt-4 flex flex-col space-y-4">
               <a
                 v-for="item in navItems"
                 :key="item.id"
                 @click="scrollToSection(item.id); toggleMobileMenu()"
-                class="cursor-pointer text-gray-300 transition-colors hover:text-blue-400"
+                class="cursor-pointer transition-colors"
               >
                 {{ item.name }}
               </a>
@@ -43,58 +43,67 @@
       </div>
     </nav>
 
-    <section id="home" class="relative flex min-h-screen items-center justify-center overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20"></div>
-      <div class="container relative z-10 px-4 text-center sm:px-6">
-        <div class="animate-fade-in-up reveal-on-scroll">
-          <h1 class="mb-4 text-[clamp(2rem,5vw,3.5rem)] font-bold sm:text-5xl md:text-7xl">
-            Hi, I'm <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Devoy Douglas</span>
+    <section id="home" class="hero-section relative flex min-h-screen items-center overflow-hidden">
+      <div class="hero-grid absolute inset-0" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-one" aria-hidden="true"></div>
+      <div class="hero-orbit orbit-two" aria-hidden="true"></div>
+      <div class="hero-layout container relative z-10 mx-auto px-4 sm:px-6">
+        <div class="hero-copy animate-fade-in-up reveal-on-scroll">
+          <p class="eyebrow"><span class="availability-dot"></span> Available for select projects</p>
+          <p class="hero-kicker">Independent developer <span>·</span> Jamaica</p>
+          <h1>
+            I make digital<br />
+            things <span class="hero-highlight">feel alive.</span>
           </h1>
-          <p class="mx-auto mb-8 max-w-3xl text-base text-gray-300 sm:text-lg md:text-2xl">
-            Full-stack developer building high-impact digital products with elegant UX, thoughtful motion, and reliable performance.
+          <p class="hero-description">
+            Hey, I'm Devoy Douglas. I design and build thoughtful web experiences where bold ideas meet useful details.
           </p>
-          <div class="flex flex-col justify-center gap-3 sm:flex-row sm:gap-4">
+          <div class="hero-actions flex flex-col gap-3 sm:flex-row sm:gap-4">
             <button
               @click="scrollToSection('projects')"
-              class="w-full rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-5 py-3 text-sm font-semibold transition-all duration-300 hover:scale-105 hover:from-blue-600 hover:to-purple-700 sm:w-auto sm:text-base"
+              class="button-primary w-full px-5 py-3 text-sm font-semibold transition-all duration-300 sm:w-auto sm:text-base"
             >
-              View My Work
+              Explore selected work <span aria-hidden="true">↗</span>
             </button>
             <button
               @click="scrollToSection('contact')"
-              class="w-full rounded-full border-2 border-blue-400 px-5 py-3 text-sm font-semibold text-blue-400 transition-all duration-300 hover:bg-blue-400 hover:text-white sm:w-auto sm:text-base"
+              class="button-secondary w-full px-5 py-3 text-sm font-semibold transition-all duration-300 sm:w-auto sm:text-base"
             >
-              Get In Touch
+              Say hello
             </button>
           </div>
+          <div class="hero-footnote"><span>01 / 05</span><span>Scroll to explore</span><span class="footnote-line"></span></div>
         </div>
-      </div>
-
-      <div class="animate-float absolute left-4 top-20 h-16 w-16 rounded-full bg-blue-500/10 sm:left-10 sm:h-20 sm:w-20"></div>
-      <div class="animate-float-delayed absolute bottom-16 right-4 h-24 w-24 rounded-full bg-purple-500/10 sm:bottom-20 sm:right-10 sm:h-32 sm:w-32">
-        <img class="h-24 w-24 rounded-full object-cover sm:h-32 sm:w-32" :src="Img" alt="Me" />
+        <div class="hero-portrait-wrap reveal-on-scroll">
+          <div class="portrait-sticker sticker-top">Curious<br />by nature <span>✳</span></div>
+          <div class="portrait-frame"><img :src="Img" alt="Devoy Douglas in his graduation gown" /></div>
+          <div class="portrait-sun" aria-hidden="true"></div>
+          <div class="portrait-caption"><span>DEVoy DOUGLAS</span><span>BUILDING WHAT'S NEXT</span></div>
+          <div class="portrait-sticker sticker-bottom">Code with<br />character <span>↗</span></div>
+        </div>
       </div>
     </section>
 
-    <section id="about" class="bg-gray-800/50 py-20">
+    <section id="about" class="about-section py-20">
       <div class="container mx-auto px-4 sm:px-6">
-        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">About Me</h2>
+        <div class="section-heading mb-12 sm:mb-16"><p class="section-index">01 — A LITTLE ABOUT ME</p><h2>Good work starts<br />with <span>good questions.</span></h2></div>
         <div class="grid items-center gap-8 md:grid-cols-2 md:gap-12">
-          <div class="reveal-on-scroll">
-            <div class="about-photo-shell mx-auto flex h-64 w-64 items-center justify-center rounded-full p-2 shadow-2xl shadow-purple-500/20 sm:h-80 sm:w-80">
-              <img class="h-full w-full rounded-full object-cover" :src="Img2" alt="Me" />
+          <div class="about-image-column reveal-on-scroll">
+            <div class="about-photo-shell mx-auto flex h-64 w-64 items-center justify-center p-2 sm:h-80 sm:w-80">
+              <img class="h-full w-full object-cover" :src="Img2" alt="Devoy Douglas at work" />
             </div>
+            <p class="image-note">Based in Mandeville, Jamaica <span>18.04° N / 77.50° W</span></p>
           </div>
           <div class="reveal-on-scroll">
-            <p class="mb-6 text-base leading-relaxed text-gray-300 sm:text-lg">
+            <p class="about-lead mb-6 text-base leading-relaxed sm:text-lg">
               I'm a passionate web developer with {{ yearsOfExperience }}+ years of experience creating digital solutions that move businesses forward. I combine product thinking with modern engineering to ship experiences that feel effortless and impactful.
             </p>
-            <p class="mb-8 text-base leading-relaxed text-gray-300 sm:text-lg">
+            <p class="about-copy mb-8 text-base leading-relaxed sm:text-lg">
               From responsive interfaces to backend systems and data-rich dashboards, I enjoy turning complex problems into clear, intuitive products.
             </p>
 
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div v-for="skill in skills" :key="skill.name" class="rounded-lg border border-gray-700 bg-gray-700/50 p-4">
+              <div v-for="skill in skills" :key="skill.name" class="skill-item p-4">
                 <div class="mb-2 flex items-center justify-between">
                   <span class="font-semibold">{{ skill.name }}</span>
                   <span class="text-sm text-gray-400">{{ skill.level }}%</span>
@@ -112,19 +121,19 @@
       </div>
     </section>
 
-    <section id="projects" class="py-20">
+    <section id="projects" class="projects-section py-20">
       <div class="container mx-auto px-4 sm:px-6">
-        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">Featured Projects</h2>
+        <div class="section-heading section-heading-row mb-12 sm:mb-16"><div><p class="section-index">02 — SELECTED WORK</p><h2>Made to make<br /><span>a difference.</span></h2></div><p class="section-aside">A few useful things, carefully made.<br />Choose one to take a closer look.</p></div>
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="project in projects"
             :key="project.id"
-            class="group reveal-on-scroll overflow-hidden rounded-2xl border border-gray-800 bg-gray-800/80 shadow-2xl shadow-black/20 transition-all duration-300 hover:-translate-y-2 hover:shadow-blue-500/10"
+            class="project-card group reveal-on-scroll overflow-hidden transition-all duration-300 hover:-translate-y-2"
           >
             <div :class="['flex h-48 items-center justify-between bg-gradient-to-br', project.gradient, 'p-6']">
               <component :is="project.icon" class="h-16 w-16 text-white" />
-              <div class="rounded-full bg-white/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-white">
-                Live demo
+              <div class="project-number">
+                0{{ project.id }} <span>↗</span>
               </div>
             </div>
             <div class="p-5 sm:p-6">
@@ -134,7 +143,7 @@
                 <span
                   v-for="tech in project.technologies"
                   :key="tech"
-                  class="rounded-full bg-gray-700 px-2 py-1 text-xs text-gray-200"
+                  class="tech-tag px-2 py-1 text-xs"
                 >
                   {{ tech }}
                 </span>
@@ -159,9 +168,9 @@
       </div>
     </section>
 
-    <section id="experience" class="bg-gray-800/50 py-20">
+    <section id="experience" class="experience-section py-20">
       <div class="container mx-auto px-4 sm:px-6">
-        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">Experience</h2>
+        <div class="section-heading mb-12 sm:mb-16"><p class="section-index">03 — THE PATH SO FAR</p><h2>Learning by <span>making.</span></h2></div>
         <div class="mx-auto max-w-4xl">
           <div class="relative">
             <div class="absolute bottom-0 left-4 top-0 w-0.5 bg-gradient-to-b from-blue-400 to-purple-500 sm:left-8"></div>
@@ -183,9 +192,9 @@
       </div>
     </section>
 
-    <section id="contact" class="py-20">
+    <section id="contact" class="contact-section py-20">
       <div class="container mx-auto px-4 sm:px-6">
-        <h2 class="mb-12 text-center text-3xl font-bold sm:mb-16 sm:text-4xl">Get In Touch</h2>
+        <div class="section-heading mb-12 sm:mb-16"><p class="section-index">04 — YOUR TURN</p><h2>Have a good one<br /><span>in mind?</span></h2></div>
         <div class="mx-auto grid max-w-4xl gap-8 md:grid-cols-2 md:gap-12">
           <div class="reveal-on-scroll">
             <h3 class="mb-6 text-xl font-bold sm:text-2xl">Let's work together</h3>
@@ -261,7 +270,7 @@
       </div>
     </section>
 
-    <footer class="bg-gray-800 py-8">
+    <footer class="site-footer py-8">
       <div class="container mx-auto px-4 text-center sm:px-6">
         <p class="text-gray-400">
           © {{ currentYear }} Devoy Douglas. Built with Vue.js and Tailwind CSS.
@@ -291,7 +300,6 @@ import {
   ShoppingCartIcon,
   BarChart3Icon
 } from 'lucide-vue-next'
-import './style.css'
 import Img from './assets/img/me.png'
 import Img2 from './assets/img/me-side.png'
 
