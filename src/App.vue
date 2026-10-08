@@ -137,7 +137,14 @@
               </div>
             </div>
             <div class="p-5 sm:p-6">
-              <h3 class="mb-2 text-lg font-bold sm:text-xl">{{ project.title }}</h3>
+              <h3 class="mb-2 text-lg font-bold sm:text-xl">
+                <a
+                  :href="`#project-${project.id}`"
+                  class="project-card-title-link"
+                  :aria-label="`Open ${project.title} project`"
+                  @click.prevent="openProject(project)"
+                >{{ project.title }}</a>
+              </h3>
               <p class="mb-4 text-sm leading-relaxed text-gray-400">{{ project.description }}</p>
               <div class="mb-4 flex flex-wrap gap-2">
                 <span
@@ -148,7 +155,7 @@
                   {{ tech }}
                 </span>
               </div>
-              <div class="flex flex-wrap gap-4">
+              <div class="project-card-actions relative z-10 flex flex-wrap gap-4">
                 <button @click="openProject(project)" class="flex items-center gap-2 text-blue-400 transition-colors hover:text-blue-300">
                   <ExternalLinkIcon class="h-4 w-4" />
                   Live Demo
@@ -282,7 +289,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted, watch } from 'vue'
 import ProjectPage from './ProjectPage.vue'
 import {
   MenuIcon,
@@ -602,15 +609,8 @@ function handleScroll() {
   }
 }
 
-async function submitForm() {
-  isSubmitting.value = true
-  await new Promise((resolve) => setTimeout(resolve, 900))
-  form.value = { name: '', email: '', message: '' }
-  isSubmitting.value = false
-}
-
-onMounted(() => {
-  syncViewFromHash()
+function observeRevealElements() {
+  revealObserver.value?.disconnect()
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -625,7 +625,27 @@ onMounted(() => {
 
   document.querySelectorAll('.reveal-on-scroll').forEach((element) => observer.observe(element))
   revealObserver.value = observer
+}
+
+async function submitForm() {
+  isSubmitting.value = true
+  await new Promise((resolve) => setTimeout(resolve, 900))
+  form.value = { name: '', email: '', message: '' }
+  isSubmitting.value = false
+}
+
+onMounted(() => {
+  syncViewFromHash()
+  observeRevealElements()
   window.addEventListener('scroll', handleScroll, { passive: true })
+  handleScroll()
+})
+
+watch(activeView, async (view) => {
+  if (view !== 'home') return
+
+  await nextTick()
+  observeRevealElements()
   handleScroll()
 })
 
